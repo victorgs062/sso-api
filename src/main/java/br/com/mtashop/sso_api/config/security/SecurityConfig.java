@@ -1,5 +1,7 @@
 package br.com.mtashop.sso_api.config.security;
 
+import br.com.mtashop.sso_api.security.jwt.JwtAccessDeniedHandler;
+import br.com.mtashop.sso_api.security.jwt.JwtAuthenticationEntryPoint;
 import br.com.mtashop.sso_api.security.user.CustomUserDetailsService;
 import br.com.mtashop.sso_api.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -25,15 +27,28 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           JwtAuthenticationEntryPoint entryPoint,
+                                           JwtAccessDeniedHandler accessDeniedHandler) throws Exception {
+
         http.csrf(csrf -> csrf.disable());
         http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.exceptionHandling(ex -> ex
+                .authenticationEntryPoint(entryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
+        );
+
         http.authorizeHttpRequests(auth ->
-                auth.requestMatchers("/auth/autenticar", "/auth/registrar", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                auth.requestMatchers("/auth/autenticar", "/auth/registrar",
+                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                        .permitAll()
                         .anyRequest().authenticated()
         );
+
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
