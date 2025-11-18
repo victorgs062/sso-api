@@ -5,6 +5,7 @@ import br.com.mtashop.sso_api.exception.usuario.UsuarioNaoEncontradoException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Map;
 
@@ -19,6 +20,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsuarioNaoEncontradoException.class)
     public ResponseEntity<?> usuarioNaoEncontrado(UsuarioNaoEncontradoException e) {
         return ResponseEntity.status(404).body(Map.of("erro", e.getMessage()));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> accessDenied(AccessDeniedException e) {
+        return ResponseEntity.status(403).body(Map.of("erro", "Acesso negado"));
     }
 
     @ExceptionHandler(Exception.class)

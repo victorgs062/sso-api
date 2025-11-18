@@ -7,9 +7,12 @@ import br.com.mtashop.sso_api.model.enums.Permissao;
 import br.com.mtashop.sso_api.model.entity.Usuario;
 import br.com.mtashop.sso_api.repository.UsuarioRepository;
 import br.com.mtashop.sso_api.util.PublicIdGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class UsuarioService {
@@ -17,6 +20,9 @@ public class UsuarioService {
     private final UsuarioRepository repo;
     private final PasswordEncoder encoder;
     private final PublicIdGenerator publicIdGenerator;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     public UsuarioService(UsuarioRepository repo, PasswordEncoder encoder, PublicIdGenerator publicIdGenerator) {
         this.repo = repo;
@@ -50,5 +56,9 @@ public class UsuarioService {
                 .filter(u -> publicId.equals(u.getPublicId()))
                 .findFirst()
                 .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
+    }
+
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
     }
 }
