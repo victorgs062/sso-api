@@ -20,7 +20,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @Operation(description = "Retorna os dados do usuário autenticado")
+    @Operation(summary = "Retorna os dados do usuário autenticado")
     @GetMapping("/perfil")
     public UsuarioDTO meuPerfil(Authentication auth) {
         CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
@@ -28,7 +28,7 @@ public class UsuarioController {
         return new UsuarioDTO(u.getPublicId(), u.getNome(), u.getEmail(), u.getPermissao().name(), u.getStatus());
     }
 
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DESENVOLVEDOR'")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DESENVOLVEDOR', 'USUARIO')")
     @Operation(summary = "Lista todos os usuários (ADMINISTRADOR ou DESENVOLVEDOR)")
     @GetMapping
     public List<UsuarioDTO> listarUsuarios() {

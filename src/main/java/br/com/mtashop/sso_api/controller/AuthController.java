@@ -8,6 +8,7 @@ import br.com.mtashop.sso_api.model.entity.Usuario;
 import br.com.mtashop.sso_api.service.AuthService;
 import br.com.mtashop.sso_api.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +24,15 @@ public class AuthController {
         this.usuarioService = usuarioService;
     }
 
-    @Operation(description = "Faz login com email e senha e retorna JWT")
+    @Operation(summary = "Faz login com email e senha e retorna JWT")
     @PostMapping(value = "/autenticar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuthResponseDTO login(@RequestBody AuthRequestDTO dto) {
+    public AuthResponseDTO login(@Valid @RequestBody AuthRequestDTO dto) {
         return authService.login(dto);
     }
 
-    @Operation(description = "Cria um novo usuário")
+    @Operation(summary = "Cria um novo usuário")
     @PostMapping(value = "/registrar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UsuarioDTO registrar(@RequestBody RegistrarUsuarioDTO dto) {
+    public UsuarioDTO registrar(@Valid @RequestBody RegistrarUsuarioDTO dto) {
         Usuario u = usuarioService.registrar(dto);
         return new UsuarioDTO(u.getPublicId(), u.getNome(), u.getEmail(), u.getPermissao().name(), u.getStatus());
     }
